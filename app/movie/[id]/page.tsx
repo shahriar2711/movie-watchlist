@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import type { Metadata } from "next";
 import { getMovieDetails, posterUrl } from "@/lib/tmdb";
 import { getWatchlist } from "@/lib/watchlist";
@@ -36,9 +37,9 @@ export default async function MoviePage({ params }: Props) {
 
   return (
     <main className="flex-1 max-w-3xl mx-auto w-full px-6 py-12">
-      <a href="/" className="font-display text-xs text-muted hover:text-teal">
+      <Link href="/" className="font-display text-xs text-muted hover:text-teal">
         ← back
-      </a>
+      </Link>
 
       <div className="flex gap-6 mt-4 flex-col sm:flex-row">
         <div className="w-full sm:w-48 shrink-0 aspect-[2/3] bg-hairline rounded-md overflow-hidden relative">
