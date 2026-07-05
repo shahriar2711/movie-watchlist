@@ -19,18 +19,30 @@ export default function WatchlistButton({
   const [pending, setPending] = useState(false);
 
   async function setTo(next: Status) {
+    const previous = status;
+    setStatus(next); // optimistic: update immediately, before the server responds
     setPending(true);
-    if (next === null) {
-      await fetch(`/api/watchlist?movieId=${movieId}`, { method: "DELETE" });
-    } else {
-      await fetch("/api/watchlist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ movieId, title, posterPath, status: next }),
-      });
+
+    try {
+      const res =
+        next === null
+          ? await fetch(`/api/watchlist?movieId=${movieId}`, {
+              method: "DELETE",
+            })
+          : await fetch("/api/watchlist", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ movieId, title, posterPath, status: next }),
+            });
+
+      if (!res.ok) {
+        setStatus(previous); // roll back — the server rejected the change
+      }
+    } catch {
+      setStatus(previous); // roll back — request never reached the server
+    } finally {
+      setPending(false);
     }
-    setStatus(next);
-    setPending(false);
   }
 
   return (

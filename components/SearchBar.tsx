@@ -15,11 +15,9 @@ export default function SearchBar() {
   // React/Next.js pattern you haven't needed until now.
   useEffect(() => {
     if (query.trim().length === 0) {
-      setResults([]);
       return;
     }
 
-    setLoading(true);
     const timer = setTimeout(async () => {
       const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
       const data = await res.json();
@@ -30,12 +28,22 @@ export default function SearchBar() {
     return () => clearTimeout(timer);
   }, [query]);
 
+  function handleChange(value: string) {
+    setQuery(value);
+    if (value.trim().length === 0) {
+      setResults([]);
+      setLoading(false);
+    } else {
+      setLoading(true); // set here, in the event handler — not inside the effect
+    }
+  }
+
   return (
     <div className="relative">
       <input
         type="text"
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e) => handleChange(e.target.value)}
         placeholder="Search for a movie…"
         className="w-full border border-hairline rounded-md px-4 py-2 text-sm bg-white"
       />
