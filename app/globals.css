@@ -6,6 +6,7 @@
   --muted: #6b7280;
   --teal: #0e7c7b;
   --hairline: #d8dbd6;
+  --danger: #cf222e;
 }
 
 @theme inline {
@@ -14,6 +15,7 @@
   --color-muted: var(--muted);
   --color-teal: var(--teal);
   --color-hairline: var(--hairline);
+  --color-danger: var(--danger);
   --font-display: var(--font-display);
   --font-body: var(--font-body);
 }

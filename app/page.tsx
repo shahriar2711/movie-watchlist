@@ -1,13 +1,13 @@
 import { getTrending } from "@/lib/tmdb";
 import { getWatchlist } from "@/lib/watchlist";
-import MovieCard from "@/components/MovieCard";
+import TrendingGrid from "@/components/TrendingGrid";
 import SearchBar from "@/components/SearchBar";
 
 // This page revalidates at most once an hour (see lib/tmdb.ts) — trending
 // data doesn't need to be fetched fresh on every visitor.
 export default async function Home() {
-  const [trending, watchlist] = await Promise.all([
-    getTrending(),
+  const [{ results: trending, totalPages }, watchlist] = await Promise.all([
+    getTrending(1),
     getWatchlist(),
   ]);
 
@@ -45,11 +45,7 @@ export default async function Home() {
         <h2 className="font-display text-sm text-muted mb-3">
           trending this week
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-5">
-          {trending.slice(0, 15).map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
-          ))}
-        </div>
+        <TrendingGrid initialResults={trending} initialTotalPages={totalPages} />
       </section>
     </main>
   );

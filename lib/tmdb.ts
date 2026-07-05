@@ -28,14 +28,16 @@ export function posterUrl(path: string | null, size: "w200" | "w500" = "w500") {
 // Trending movies — this powers the homepage, and is cached/revalidated
 // rather than fetched fresh on every request (see the `revalidate` export
 // in app/page.tsx). This is the SSG/ISR half of the rendering story.
-export async function getTrending(): Promise<Movie[]> {
+export async function getTrending(
+  page: number = 1
+): Promise<{ results: Movie[]; totalPages: number }> {
   const res = await fetch(
-    `${TMDB_BASE}/trending/movie/week?api_key=${apiKey()}`,
+    `${TMDB_BASE}/trending/movie/week?api_key=${apiKey()}&page=${page}`,
     { next: { revalidate: 3600 } } // rebuild this data at most once an hour
   );
   if (!res.ok) throw new Error(`TMDB trending failed: ${res.status}`);
   const data = await res.json();
-  return data.results as Movie[];
+  return { results: data.results as Movie[], totalPages: data.total_pages };
 }
 
 // Search — called from the API route on every keystroke (debounced client
